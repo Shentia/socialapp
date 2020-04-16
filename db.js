@@ -1,6 +1,7 @@
 const mongodb = require("mongodb");
 
-const connectionString = "DATABASE ";
+const connectionString =
+  "mongodb+srv://shentia:cU4WxcwfY892yvXo@cluster0-e70ib.mongodb.net/socialapp?retryWrites=true ";
 
 mongodb.connect(
   connectionString,
