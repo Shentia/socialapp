@@ -1,6 +1,6 @@
 const usersCollection = require("../db").collection("users");
 
-const validator = require("validator");
+let validator = require("validator");
 
 let User = function (data) {
   this.data = data;
@@ -29,13 +29,10 @@ User.prototype.validate = function () {
   if (this.data.username == "") {
     this.errors.push("You Should insert username");
   }
-  if (
-    this.data.username != "" &&
-    !validator.isAlphanumeric(this.data.username)
-  ) {
+  if (this.data.username != "" && !isAlphanumeric(this.data.username)) {
     this.errors.push("You can use Number and characters");
   }
-  if (!validator.isEmail(this.data.email)) {
+  if (!isEmail(this.data.email)) {
     this.errors.push("You Should insert email");
   }
   if (this.data.password == "") {
