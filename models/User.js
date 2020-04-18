@@ -9,21 +9,22 @@ let User = function (data) {
 
 User.prototype.cleanUp = function () {
   if (typeof this.data.username != "string") {
-    this.data.username == "";
+    this.data.username = "";
   }
   if (typeof this.data.email != "string") {
-    this.data.email == "";
+    this.data.email = "";
   }
   if (typeof this.data.password != "string") {
-    this.data.password == "";
+    this.data.password = "";
   }
+  //For bogus Properties
+
   this.data = {
     username: this.data.username.trim().toLowerCase(),
     email: this.data.email.trim().toLowerCase(),
     password: this.data.password,
   };
 };
-//For bogus Properties
 
 User.prototype.validate = function () {
   if (this.data.username == "") {
@@ -61,8 +62,22 @@ User.prototype.validate = function () {
   }
 };
 
+User.prototype.login = function () {
+  this.cleanUp();
+  usersCollection.findOne(
+    { username: this.data.username },
+    (err, attemptedUser) => {
+      if (attemptedUser && attemptedUser.password == this.data.password) {
+        console.log("Cogerates...");
+      } else {
+        console.log("You are Fucked");
+      }
+    }
+  );
+};
+
 User.prototype.register = function () {
-  //Step #1: Validate User data
+  //Step #1: Validate ifUser data
   this.cleanUp();
   this.validate();
 
