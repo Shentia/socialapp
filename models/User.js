@@ -1,3 +1,4 @@
+const bcrypt = require("bcryptjs");
 const usersCollection = require("../db").collection("users");
 
 let validator = require("validator");
@@ -46,8 +47,8 @@ User.prototype.validate = function () {
     this.errors.push(
       "Password must be at least 3 Characters and maximum 12 characters."
     );
-    if (this.data.password.lenght > 100) {
-      this.data.errors.push("Password In over qualified 100 Characters!!!");
+    if (this.data.password.lenght > 50) {
+      this.data.errors.push("Password In over qualified 50 Characters!!!");
     }
 
     if (this.data.username.lenght > 0 && this.data.username.lenght < 3) {
@@ -62,18 +63,28 @@ User.prototype.validate = function () {
   }
 };
 
+//Login Part
 User.prototype.login = function () {
-  this.cleanUp();
-  usersCollection.findOne(
-    { username: this.data.username },
-    (err, attemptedUser) => {
-      if (attemptedUser && attemptedUser.password == this.data.password) {
-        console.log("Cogerates...");
-      } else {
-        console.log("You are Fucked");
-      }
-    }
-  );
+  return new Promise((resolve, reject) => {
+    this.cleanUp();
+    usersCollection
+      .findOne({ username: this.data.username })
+      .then((attemptedUser) => {
+        //a= not password hash in bcrypt.compareSynd = this.data.password
+        //b = Hash value in database
+        if (
+          attemptedUser &&
+          bcrypt.compareSync(this.data.password, attemptedUser.password)
+        ) {
+          resolve("congerats...");
+        } else {
+          reject("You are Fucked");
+        }
+      })
+      .catch(function () {
+        reject("Please try Again.");
+      });
+  });
 };
 
 User.prototype.register = function () {
@@ -82,6 +93,10 @@ User.prototype.register = function () {
   this.validate();
 
   if (!this.errors.lenght) {
+    //hash user password
+    let salt = bcrypt.genSaltSync(10);
+    this.data.password = bcrypt.hashSync(this.data.password, salt);
+
     usersCollection.insertOne(this.data);
   }
 };

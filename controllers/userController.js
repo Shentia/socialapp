@@ -1,9 +1,18 @@
 const User = require("../models/User");
 
+//Login Part
 exports.login = function (req, res) {
   let user = new User(req.body);
-  user.login();
-  res.send("Great Login");
+  user
+    .login()
+    .then(function (result) {
+      //resolve Promise
+      res.send(result);
+    })
+    .catch(function (e) {
+      //reject Promise
+      res.send(e);
+    });
 };
 exports.logout = function () {};
 exports.register = function (req, res) {
